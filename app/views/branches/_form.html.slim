@@ -1,0 +1,19 @@
+= form_for @branch do |f|
+  -if @branch.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@branch.errors.count, "error")} prohibited this branch from being saved:"
+      ul
+        - @branch.errors.full_messages.each do |msg|
+          li= msg
+
+  .field
+    = f.label :project
+    = f.text_field :project
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :status
+    = f.text_field :status
+  .actions
+    = f.submit 'Save'

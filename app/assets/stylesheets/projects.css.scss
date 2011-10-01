@@ -1,0 +1,15 @@
+// Place all the styles related to the Projects controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.project {
+  background-color: #EEE;
+  width: 100%;
+  .header td:first-child {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .branches {
+  }
+}

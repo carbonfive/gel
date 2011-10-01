@@ -1,0 +1,15 @@
+p#notice = notice
+
+p
+  b Project:
+  = @branch.project
+p
+  b Name:
+  = @branch.name
+p
+  b Status:
+  = @branch.status
+
+= link_to 'Edit', edit_branch_path(@branch)
+'|
+= link_to 'Back', branches_path
