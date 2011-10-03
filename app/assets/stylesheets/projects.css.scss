@@ -2,14 +2,11 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+.project_name {
+  font-size: 14px;
+  font-weight: bold;
+}
 
-.project {
-  background-color: #EEE;
-  width: 100%;
-  .header td:first-child {
-    font-size: 14px;
-    font-weight: bold;
-  }
-  .branches {
-  }
+.project_name, .branch_name {
+  width: 600px;
 }

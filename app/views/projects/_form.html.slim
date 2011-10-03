@@ -6,11 +6,15 @@
         - @project.errors.full_messages.each do |msg|
           li= msg
 
-  .field
-    = f.label :name
-    = f.text_field :name
-  .field
-    = f.label :git_url
-    = f.text_field :git_url
-  .actions
-    = f.submit 'Save'
+  fieldset
+    div.clearfix
+      = f.label :name
+      div.input
+        = f.text_field :name, :class => 'xlarge'
+    div.clearfix
+      = f.label :git_url
+      div.input
+        = f.text_field :git_url, :class => 'xlarge'
+    div.actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Cancel', projects_path, :class => 'btn'

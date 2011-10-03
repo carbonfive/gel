@@ -1,22 +1,19 @@
-h1 Listing projects
+h1 Projects
 
-table
-  - @projects.each do |project|
-    tr
-      td
-        table.project
-          tr.header
-            td= project.name
-            td= link_to('Show', project) + ' ' + \
-             link_to('Edit', edit_project_path(project)) + ' ' + \
-             link_to('Refresh', refresh_project_path(project)) + ' ' + \
-             link_to('Destroy', project, :confirm => 'Are you sure?', :method => :delete)
-          - project.branches.each do |branch|
-            tr.branches
-              tr
-                td= format_branch_name(branch.name)
-                td= time_ago_in_words(branch.last_commit_at) + ' ago'
+- @projects.each do |project|
+  table
+    tbody
+      tr
+        td.project_name= project.name
+        td= link_to('Show', project) + ' ' + \
+         link_to('Edit', edit_project_path(project)) + ' ' + \
+         link_to('Refresh', refresh_project_path(project)) + ' ' + \
+         link_to('Destroy', project, :confirm => 'Are you sure?', :method => :delete)
+      - project.branches.each do |branch|
+        tr
+          td.branch_name= format_branch_name(branch.name)
+          td= time_ago_in_words(branch.last_commit_at) + ' ago'
 
 br
 
-= link_to 'New Project', new_project_path
+= link_to 'New Project', new_project_path, :class => 'btn primary'
