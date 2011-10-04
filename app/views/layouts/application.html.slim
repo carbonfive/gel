@@ -10,6 +10,8 @@ body
 
     div.container
       div.content
+        div.page-header
+          h1= content_for :page_header
         div.row
           div.span14
             - if flash[:notice].present?
