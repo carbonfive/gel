@@ -24,7 +24,12 @@ describe ProjectsController do
   # Project. As you add validations to Project, be sure to
   # update the return value of this method accordingly.
   def valid_attributes
-    {}
+    { name: 'Project A', git_url: 'git://github.com/carbonfive/gel.git' }
+  end
+
+  before do
+    Project.any_instance.stub(:clone)
+    Project.any_instance.stub(:update_branches)
   end
 
   describe "GET index" do
@@ -72,9 +77,9 @@ describe ProjectsController do
         assigns(:project).should be_persisted
       end
 
-      it "redirects to the created project" do
+      it "redirects to the projects index" do
         post :create, :project => valid_attributes
-        response.should redirect_to(Project.last)
+        response.should redirect_to projects_path
       end
     end
 
@@ -113,10 +118,10 @@ describe ProjectsController do
         assigns(:project).should eq(project)
       end
 
-      it "redirects to the project" do
+      it "redirects to the projects index" do
         project = Project.create! valid_attributes
         put :update, :id => project.id, :project => valid_attributes
-        response.should redirect_to(project)
+        response.should redirect_to projects_path
       end
     end
 
