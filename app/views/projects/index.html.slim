@@ -12,8 +12,12 @@
          link_to('Destroy', project, :confirm => 'Are you sure?', :method => :delete)
       - project.branches.each do |branch|
         tr
-          td.branch_name= format_branch_name(branch.name)
-          td= time_ago_in_words(branch.last_commit_at) + ' ago'
+          td.branch_name
+            = format_branch_name(branch.name)
+            span.last_activity= time_ago_in_words(branch.last_commit_at) + ' ago'
+          td
+            //button.btn.small.success Deploy
+            span.label.success Deployed
 
 br
 
