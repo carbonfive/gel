@@ -6,6 +6,12 @@ Gel::Application.routes.draw do
     member do
       get :refresh
     end
+
+    resources :branches, :only => :deploy do
+      member do
+        post :deploy
+      end
+    end
   end
 
 end

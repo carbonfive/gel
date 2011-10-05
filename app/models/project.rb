@@ -44,7 +44,7 @@ class Project < ActiveRecord::Base
 
   def clone
     return if cloned?
-
+    FileUtils.mkdir_p '/tmp/checkouts'
     repo = Git.clone(git_url, SecureRandom.hex(32), path: '/tmp/checkouts')
     self.location = repo.dir.path
   end
@@ -58,8 +58,8 @@ class Project < ActiveRecord::Base
   def remote_branches
     @remote_branches ||= Git.init(location)
       .branches
-      .remote
       .reject { |b| b.full =~ /HEAD/ }
+      .select { |b| b.full =~ /^remotes/ }
       .select { |b| b.full =~ /master|development|feature/ }
   end
 

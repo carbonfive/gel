@@ -1,6 +1,6 @@
 module BranchesHelper
   def format_branch_name(name)
-    name.sub(%r(remotes/origin/), '').sub(%r(feature/|features/), '')
+    name.sub(%r(remotes/origin/), '')
   end
 
   def sort_branches(branch_names)

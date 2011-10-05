@@ -6,7 +6,8 @@ gem 'slim-rails'
 gem 'mysql2'
 
 gem 'git'
-#gem 'state_machine'
+gem 'state_machine'
+gem 'vagrant'
 
 # Gems used only for assets and not required
 # in production environments by default.
