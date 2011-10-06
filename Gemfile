@@ -23,8 +23,8 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_girl_rails'
-  gem 'capybara'
+#  gem 'factory_girl_rails'
+#  gem 'capybara'
 end
 
 # Use unicorn as the web server
