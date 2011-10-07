@@ -4,7 +4,7 @@ Vagrant::Config.run do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "lucid32"
+  config.vm.box = "natty64-carbonfive"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
@@ -53,14 +53,23 @@ Vagrant::Config.run do |config|
   # to this Vagrantfile), and adding some recipes and/or roles.
   #
   config.vm.provision :chef_solo do |chef|
-     chef.cookbooks_path = "cookbooks"
-     chef.add_recipe "build-essential"
-     chef.add_recipe "rvm::system"
-     chef.add_recipe "mysql::server"
-     #chef.add_role "web"
+    chef.cookbooks_path = "cookbooks"
+    chef.add_recipe "build-essential"
+    chef.add_recipe "mysql::server"
+    chef.add_recipe "mysql::client"
+    chef.add_recipe "git"
+    chef.add_recipe "rvm::system"
+    #chef.add_role "web"
 
-     # You may also specify custom JSON attributes:
-     chef.json = { :mysql_password => "", :default_ruby => `` }
+    # You may also specify custom JSON attributes:
+    chef.json = {
+      :mysql => {
+        :server_root_password => ""
+      },
+      :rvm => {
+        :default_ruby => "ruby-1.9.3-rc1" # TODO: Dry up, this is also in the project rvmrc.
+      }
+    }
   end
 
   # Enable provisioning with chef server, specifying the chef server URL,
