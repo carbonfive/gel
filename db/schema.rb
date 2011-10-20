@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(:version => 20111005221526) do
     t.datetime "last_commit_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "status"
+    t.string   "status",         :default => "uninitialized"
   end
 
   add_index "branches", ["project_id"], :name => "index_branches_on_project_id"

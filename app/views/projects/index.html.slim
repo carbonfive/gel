@@ -17,8 +17,8 @@
             span.last_activity= time_ago_in_words(branch.last_commit_at) + ' ago'
           td
             span.label.success= branch.status.capitalize
-            - if branch.can_deploy?
-              = link_to 'Deploy', deploy_project_branch_path(project, branch), :class => 'btn small', :method => :post
+            //- if branch.can_deploy?
+            = link_to 'Deploy', deploy_project_branch_path(project, branch), :class => 'btn small', :method => :post
 
 br
 

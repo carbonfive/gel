@@ -1,6 +1,15 @@
 class Branch < ActiveRecord::Base
   belongs_to :project
 
+  symbolize :status
+
+  validates :status,
+            presence: true,
+            inclusion: [ :uninitialized, :provisioning, :provisioned, :updating, :testing, :deploying, :deployed ]
+
+  def deploy!
+    Resque.enqueue(Deployer, self.id)
+  end
 
   #before_transition :parked => any - :parked, :do => :put_on_seatbelt
   #
@@ -22,19 +31,15 @@ class Branch < ActiveRecord::Base
   #  transition [:idling, :first_gear] => :parked
   #end
 
-  state_machine :status, :initial => :uninitialized do
-
-    event :deploy do
-      transition [:deployed, :uninitialized] => :provisioning
-    end
-    
-  end
-
-  # uninitialized
-  # provisioning
-  # provisioned
-  # transferring source
-  # running tests -> failed
-  # deploying
-  # deployed
+  #state_machine :status, :initial => :uninitialized do
+  #
+  #  event :deploy do
+  #    transition [:deployed, :uninitialized] => :provisioning
+  #  end
+  #
+  #  after_transition :uninitialized => :provisioning do |branch|
+  #    Resque.enqueue(Deployer, branch.id)
+  #  end
+  #
+  #end
 end
