@@ -67,7 +67,7 @@ Vagrant::Config.run do |config|
         :server_root_password => ""
       },
       :rvm => {
-        :default_ruby => "ruby-1.9.3-rc1" # TODO: Dry up, this is also in the project rvmrc.
+        :default_ruby => "ruby-1.9.3-p0" # TODO: Dry up, this is also in the project rvmrc.
       }
     }
   end

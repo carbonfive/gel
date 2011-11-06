@@ -2,8 +2,9 @@ class CreateBranches < ActiveRecord::Migration
   def change
     create_table :branches do |t|
       t.references :project
-      t.string :name
-      t.datetime :last_commit_at
+      t.string     :status, default: 'uninitialized'
+      t.string     :name
+      t.datetime   :last_commit_at
 
       t.timestamps
     end

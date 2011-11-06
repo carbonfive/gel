@@ -1,27 +1,65 @@
 class Project < ActiveRecord::Base
 
+  has_many :branches, dependent: :destroy, order: 'last_commit_at desc'
+
   validates :name,    presence: true, uniqueness: true
   validates :git_url, presence: true
-
-  has_many :branches, dependent: :destroy, order: 'last_commit_at desc'
 
   after_create   :setup
   before_destroy :cleanup
 
-  # uninitialized (setting up)
-  # cloned (cloned)
+  # uninitialized
+  #  cloning
+  # cloned
+  #  extracting_branches
+  # ready
+
+  state_machine :status, :initial => :uninitialized do
+    event :initialize_project do
+      transition :uninitialized => :cloning
+    end
+
+    event :finish_initialize_project do
+      transition :cloning => :cloned
+    end
+
+    event :update_project do
+      transition [:cloned, :ready] => :updating
+    end
+
+    event :finish_update_project do
+      transition :updating => :ready
+    end
+
+    after_transition :uninitialized => :cloning do |project|
+      puts "Cloning repository..."
+      project.clone_repository
+      project.finish_initialize_project!
+    end
+
+    after_transition any => :cloned do |project|
+      puts "Cloned for the first time, updating project and branches..."
+      project.update_project!
+    end
+
+    after_transition any => :updating do |project|
+      puts "Updating branches..."
+      project.update_branches
+      project.finish_update_project!
+    end
+  end
+
+  #private
 
   def setup
-    clone
-    update_branches
-    save!
+    Resque.enqueue(SetupProject, self.id)
   end
 
   def cleanup
     FileUtils.rm_rf(location) if cloned?
   end
 
-  def update_branches(fetch_first = false)
+  def update_branches
     raise "Clone the project before updating branches." unless cloned?
 
     fetch
@@ -36,13 +74,11 @@ class Project < ActiveRecord::Base
     branches.select { |b| !remote_branch_names.include?(b.name) }.each(&:destroy)
   end
 
-  private
-
   def cloned?
     location.present? && File.directory?(location)
   end
 
-  def clone
+  def clone_repository
     return if cloned?
     FileUtils.mkdir_p '/tmp/checkouts'
     repo = Git.clone(git_url, SecureRandom.hex(32), path: '/tmp/checkouts')

@@ -11,20 +11,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111005221526) do
+ActiveRecord::Schema.define(:version => 20110930192132) do
 
   create_table "branches", :force => true do |t|
     t.integer  "project_id"
+    t.string   "status",         :default => "uninitialized"
     t.string   "name"
     t.datetime "last_commit_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "status",         :default => "uninitialized"
   end
 
   add_index "branches", ["project_id"], :name => "index_branches_on_project_id"
 
   create_table "projects", :force => true do |t|
+    t.string   "status"
     t.string   "name"
     t.string   "git_url"
     t.string   "location"

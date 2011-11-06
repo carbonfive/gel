@@ -5,11 +5,9 @@
   table
     tbody
       tr
-        td.project_name= project.name
-        td= link_to('Show', project) + ' ' + \
-         link_to('Edit', edit_project_path(project)) + ' ' + \
-         link_to('Refresh', refresh_project_path(project)) + ' ' + \
-         link_to('Destroy', project, :confirm => 'Are you sure?', :method => :delete)
+        td.project_name= link_to(project.name, project)
+        td
+         span.label.success= project.status.capitalize
       - project.branches.each do |branch|
         tr
           td.branch_name

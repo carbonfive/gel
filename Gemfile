@@ -1,10 +1,12 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.1.1'
-gem 'jquery-rails'
 gem 'slim-rails'
 gem 'mysql2'
 gem 'symbolize', require: 'symbolize/active_record'
+
+gem 'jquery-rails'
+#gem 'rails-backbone'
 
 gem 'git'
 gem 'resque'
@@ -22,6 +24,7 @@ end
 group :development, :test do
   gem 'rspec-rails'
   gem 'awesome_print', require: 'ap'
+  gem 'ruby-graphviz'
 end
 
 group :test do

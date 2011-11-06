@@ -1,7 +1,9 @@
-class Deployer
+class DeployBranch
   @queue = :deploy
   
   def self.perform(branch_id)
+    puts "## DeployBranch::perform"
+
     branch = Branch.find(branch_id)
     branch.status = :provisioning
     branch.save!
