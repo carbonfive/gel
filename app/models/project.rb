@@ -5,8 +5,16 @@ class Project < ActiveRecord::Base
   validates :name,    presence: true, uniqueness: true
   validates :git_url, presence: true
 
-  after_create   :setup
-  before_destroy :cleanup
+  after_create  :setup
+  after_destroy :cleanup
+
+  def repo_location
+    self.location + "/repo/"
+  end
+
+  def slug
+    self.name.parameterize
+  end
 
   # uninitialized
   #  cloning
@@ -49,18 +57,20 @@ class Project < ActiveRecord::Base
     end
   end
 
-  #private
-
   def setup
     Resque.enqueue(SetupProject, self.id)
   end
 
+  def refresh
+    Resque.enqueue(RefreshProject, self.id)
+  end
+
   def cleanup
-    FileUtils.rm_rf(location) if cloned?
+    FileUtils.rm_rf(location)
   end
 
   def update_branches
-    raise "Clone the project before updating branches." unless cloned?
+    #raise "Clone the project before updating branches." unless cloned?
 
     fetch
 
@@ -74,25 +84,20 @@ class Project < ActiveRecord::Base
     branches.select { |b| !remote_branch_names.include?(b.name) }.each(&:destroy)
   end
 
-  def cloned?
-    location.present? && File.directory?(location)
-  end
-
   def clone_repository
-    return if cloned?
-    FileUtils.mkdir_p '/tmp/checkouts'
-    repo = Git.clone(git_url, SecureRandom.hex(32), path: '/tmp/checkouts')
-    self.location = repo.dir.path
+    self.location = "/tmp/checkouts/#{SecureRandom.hex(32)}"
+    FileUtils.mkdir_p self.location
+    Git.clone(git_url, 'repo', path: self.location)
   end
 
   def fetch
-    raise "Clone the project before fetching." unless cloned?
-    Git.init(location).fetch
+    #raise "Clone the project before fetching." unless cloned?
+    Git.init(repo_location).fetch
     #repo.remote('origin').prune
   end
 
   def remote_branches
-    @remote_branches ||= Git.init(location)
+    @remote_branches ||= Git.init(repo_location)
       .branches
       .reject { |b| b.full =~ /HEAD/ }
       .select { |b| b.full =~ /^remotes/ }

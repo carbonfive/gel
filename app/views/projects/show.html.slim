@@ -9,8 +9,8 @@ p
 
 = link_to 'Edit', edit_project_path(@project)
 '|
-= link_to('Refresh', refresh_project_path(@project))
+= link_to 'Refresh', refresh_project_path(@project), :method => :post
 '|
-= link_to('Destroy', @project, :confirm => 'Are you sure?', :method => :delete)
+= link_to 'Destroy', @project, :confirm => 'Are you sure?', :method => :delete
 '|
 = link_to 'Back', projects_path

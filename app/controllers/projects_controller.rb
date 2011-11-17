@@ -19,9 +19,8 @@ class ProjectsController < ApplicationController
 
   def refresh
     @project = Project.find(params[:id])
-    @project.update_branches(true)
-    @project.save!
-    redirect_to projects_path, notice: 'Project refreshed!'
+    @project.refresh
+    redirect_to projects_path, notice: 'Refreshing project...'
   end
 
   def new

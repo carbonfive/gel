@@ -4,7 +4,7 @@ Gel::Application.routes.draw do
 
   resources :projects do
     member do
-      get :refresh
+      post :refresh
     end
 
     resources :branches, :only => :deploy do

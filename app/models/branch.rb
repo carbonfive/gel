@@ -7,13 +7,25 @@ class Branch < ActiveRecord::Base
             presence: true,
             inclusion: [ :uninitialized, :provisioning, :provisioned, :updating, :testing, :deploying, :deployed ]
 
-  after_create :setup
+  after_create   :setup
+  before_destroy :cleanup
 
-  private
+  def slug
+    self.name.parameterize
+  end
 
   def setup
     puts "## Branch::setup"
     Resque.enqueue(DeployBranch, self.id)
+  end
+
+  def cleanup
+    Dir.chdir("#{project.location}/#{self.slug}") do
+      %x{vagrant destroy}
+    end
+    Dir.chdir("#{project.location}") do
+      FileUtils.rm_rf "#{self.slug}"
+    end
   end
 
 end

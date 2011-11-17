@@ -25,6 +25,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'awesome_print', require: 'ap'
   gem 'ruby-graphviz'
+  gem 'therubyracer'
 end
 
 group :test do

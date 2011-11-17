@@ -71,8 +71,8 @@ class BranchesController < ApplicationController
 
   def deploy
     @branch = Branch.find(params[:id])
-    @branch.deploy!
-    redirect_to projects_path, notice: "Deploying branch."
+    @branch.setup
+    redirect_to projects_path, notice: "Deploying branch..."
   end
 
 end
