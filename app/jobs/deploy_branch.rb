@@ -8,20 +8,31 @@ class DeployBranch
     project = branch.project
 
     begin
+      puts "## DeployBranch::perform - #{project.name} - #{branch.name}"
+
       branch.status = :provisioning
       branch.save!
 
-      puts "## DeployBranch::perform"
-
       Dir.chdir(project.location) do
-        Dir.mkdir(branch.slug) unless Dir.exists?(branch.slug)
+        unless Dir.exists?(branch.slug)
+          puts "# Creating branch directory"
+          Dir.mkdir(branch.slug)
+        end
         Dir.chdir(branch.slug) do
+          puts "# Copying vagrantfile"
           FileUtils.cp "#{project.location}/repo/Vagrantfile", "#{project.location}/#{branch.slug}"
+          puts "# Copying cookbooks"
           FileUtils.cp_r "#{project.location}/repo/cookbooks", "#{project.location}/#{branch.slug}"
+          puts "# Starting/provisioning vagrant environment"
           %x{vagrant up}
+          puts "# Creating ssh_config"
           %x{vagrant ssh_config > ssh_config}
-          %x{scp -F #{project.location}/#{branch.slug}/ssh_config -r #{project.repo_location} default:./repo}
-          %x{ssh -F #{project.location}/#{branch.slug}/ssh_config "cd repo; ./gel.sh"}
+          puts "# Removing pre-existing source from vm"
+          %x{ssh -q -F #{project.location}/#{branch.slug}/ssh_config default "rm -rf ./repo"}
+          puts "# Copying project files to vm"
+          %x{scp -q -F #{project.location}/#{branch.slug}/ssh_config -r #{project.repo_location} default:./repo}
+          puts "# Running gel script"
+          %x{ssh -q -F #{project.location}/#{branch.slug}/ssh_config default "source /etc/profile.d/rvm.sh; cd repo; ./gel.sh"}
         end
       end
 
