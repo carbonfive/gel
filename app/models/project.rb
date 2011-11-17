@@ -100,6 +100,7 @@ class Project < ActiveRecord::Base
     @remote_branches ||= Git.init(repo_location)
       .branches
       .reject { |b| b.full =~ /HEAD/ }
+      .reject { |b| b.full =~ /master/ }
       .select { |b| b.full =~ /^remotes/ }
       .select { |b| b.full =~ /master|development|feature/ }
   end

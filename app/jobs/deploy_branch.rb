@@ -21,7 +21,7 @@ class DeployBranch
           %x{vagrant up}
           %x{vagrant ssh_config > ssh_config}
           %x{scp -F #{project.location}/#{branch.slug}/ssh_config -r #{project.repo_location} default:./repo}
-          %x{ssh -F #{project.location}/#{branch.slug}/ssh_config ""}
+          %x{ssh -F #{project.location}/#{branch.slug}/ssh_config "cd repo; ./gel.sh"}
         end
       end
 

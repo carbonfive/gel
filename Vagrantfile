@@ -59,6 +59,7 @@ Vagrant::Config.run do |config|
     chef.add_recipe "mysql::client"
     chef.add_recipe "git"
     chef.add_recipe "rvm::system"
+    chef.add_recipe "rvm::vagrant"
     #chef.add_role "web"
 
     # You may also specify custom JSON attributes:
@@ -67,7 +68,12 @@ Vagrant::Config.run do |config|
         :server_root_password => ""
       },
       :rvm => {
-        :default_ruby => "ruby-1.9.3-p0" # TODO: Dry up, this is also in the project rvmrc.
+        :default_ruby => "ruby-1.9.3-p0", # TODO: Dry up, this is also in the project rvmrc.
+        :rvmrc => {
+          :rvm_project_rvmrc             => 1,
+          :rvm_gemset_create_on_use_flag => 1,
+          :rvm_trust_rvmrcs_flag         => 1
+        }
       }
     }
   end
