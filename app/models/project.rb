@@ -85,7 +85,7 @@ class Project < ActiveRecord::Base
   end
 
   def clone_repository
-    self.location = "/tmp/checkouts/#{SecureRandom.hex(32)}"
+    self.location = "#{ENV['HOME']}/.gel/checkouts/#{SecureRandom.hex(32)}"
     FileUtils.mkdir_p self.location
     Git.clone(git_url, 'repo', path: self.location)
   end

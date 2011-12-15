@@ -20,11 +20,18 @@ class Branch < ActiveRecord::Base
   end
 
   def cleanup
-    Dir.chdir("#{project.location}/#{self.slug}") do
-      %x{vagrant destroy}
+    begin
+      Dir.chdir("#{project.location}/#{self.slug}") do
+        %x{vagrant destroy}
+      end
+    rescue => e
     end
-    Dir.chdir("#{project.location}") do
-      FileUtils.rm_rf "#{self.slug}"
+
+    begin
+      Dir.chdir("#{project.location}") do
+        FileUtils.rm_rf "#{self.slug}"
+      end
+    rescue => e
     end
   end
 
