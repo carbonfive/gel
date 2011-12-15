@@ -8,6 +8,6 @@ end
 
 ENV['RAILS_ENV'] = 'test'
 
-execute_command %Q{bundle}
+execute_command %Q{bundle --no-color}
 execute_command %Q{rake db:reset}
 execute_command %Q{rake spec}

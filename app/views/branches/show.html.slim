@@ -1,15 +1,5 @@
-p#notice = notice
+h1 #{@branch.project.name} - #{@branch.name}
 
-p
-  b Project:
-  = @branch.project
-p
-  b Name:
-  = @branch.name
-p
-  b Status:
-  = @branch.status
+h2 Build Log
 
-= link_to 'Edit', edit_branch_path(@branch)
-'|
-= link_to 'Back', branches_path
+pre= @branch.log

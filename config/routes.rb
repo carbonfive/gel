@@ -7,7 +7,7 @@ Gel::Application.routes.draw do
       post :refresh
     end
 
-    resources :branches, :only => :deploy do
+    resources :branches, :only => :show do
       member do
         post :deploy
       end
