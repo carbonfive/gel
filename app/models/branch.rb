@@ -5,7 +5,7 @@ class Branch < ActiveRecord::Base
 
   validates :status,
             presence: true,
-            inclusion: [ :uninitialized, :provisioning, :provisioned, :updating, :testing, :deploying, :deployed ]
+            inclusion: [ :uninitialized, :provisioning, :provisioned, :updating, :executing, :success, :failure ]
 
   after_create   :setup
   before_destroy :cleanup

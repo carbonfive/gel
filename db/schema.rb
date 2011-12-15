@@ -11,12 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110930192132) do
+ActiveRecord::Schema.define(:version => 20111214235851) do
 
   create_table "branches", :force => true do |t|
     t.integer  "project_id"
-    t.string   "status",         :default => "uninitialized"
     t.string   "name"
+    t.string   "status",                               :default => "uninitialized"
+    t.string   "message"
+    t.text     "log",            :limit => 2147483647
     t.datetime "last_commit_at"
     t.datetime "created_at"
     t.datetime "updated_at"

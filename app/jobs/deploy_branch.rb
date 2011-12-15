@@ -10,6 +10,8 @@ class DeployBranch
     begin
       puts "## DeployBranch::perform - #{project.name} - #{branch.name}"
 
+      branch.log = ""
+      branch.message = ""
       branch.status = :provisioning
       branch.save!
 
@@ -25,26 +27,47 @@ class DeployBranch
           FileUtils.cp_r "#{project.location}/repo/cookbooks", "#{project.location}/#{branch.slug}"
           puts "# Starting/provisioning vagrant environment"
           %x{vagrant up}
+          raise "Build failure executing 'vagrant up': status #{$?.exitstatus}." unless $?.success?
+
+          branch.status = :provisioned
+          branch.save!
+
           puts "# Creating ssh_config"
           %x{vagrant ssh_config > ssh_config}
+          raise "Build failure executing 'vagrant ssh_config': status #{$?.exitstatus}." unless $?.success?
+
+          branch.status = :updating
+          branch.save!
+
           puts "# Removing pre-existing source from vm"
           %x{ssh -q -F #{project.location}/#{branch.slug}/ssh_config default "rm -rf ./repo"}
+          raise "Build failure deleting old repo: status #{$?.exitstatus}." unless $?.success?
           puts "# Copying project files to vm"
           %x{scp -q -F #{project.location}/#{branch.slug}/ssh_config -r #{project.repo_location} default:./repo}
+          raise "Build failure copying sources: status #{$?.exitstatus}." unless $?.success?
+
+          branch.status = :executing
+          branch.save!
+
           puts "# Running gel script"
-          %x{ssh -q -F #{project.location}/#{branch.slug}/ssh_config default "source /etc/profile.d/rvm.sh; cd repo; ./gel.sh"}
+          branch.log = %x{ssh -q -F #{project.location}/#{branch.slug}/ssh_config default "source /etc/profile.d/rvm.sh; cd repo; ./gel.sh"}
+          branch.save!
+          raise "Build failure executing gel script: status #{$?.exitstatus}." unless $?.success?
+
+          puts "# Gel script finished successfully"
+          branch.status = :success
+          branch.save!
         end
       end
 
     rescue => e
       puts e
-      branch.status = :uninitialized
+      branch.status = :failure
+      branch.message = e.to_s
       branch.save!
       return
     end
 
-    branch.status = :provisioned
-    branch.save!
 
     #sleep 2
     #branch.status = :updating
