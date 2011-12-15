@@ -57,6 +57,9 @@ class DeployBranch
           puts "# Gel script finished successfully"
           branch.status = :success
           branch.save!
+
+          %x{vagrant suspend}
+          puts "# Suspended vagrant environment"
         end
       end
 
