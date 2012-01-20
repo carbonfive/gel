@@ -5,11 +5,13 @@ describe "projects/index.html.slim" do
     assign(:projects, [
       stub_model(Project,
         :name    => "Name1",
-        :git_url => "Git Url1"
+        :git_url => "Git Url1",
+        :status  => "Status"
       ),
       stub_model(Project,
         :name    => "Name2",
-        :git_url => "Git Url2"
+        :git_url => "Git Url2",
+        :status  => "Status"
       )
     ])
   end
