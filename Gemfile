@@ -4,6 +4,7 @@ gem 'rails', '~> 3.2.0'
 gem 'slim-rails'
 gem 'mysql2'
 gem 'symbolize', require: 'symbolize/active_record'
+gem 'sqlite3'
 
 gem 'jquery-rails'
 

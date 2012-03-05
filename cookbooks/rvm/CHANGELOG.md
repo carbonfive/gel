@@ -1,4 +1,59 @@
-## 0.8.3 (unreleased)
+## 0.8.7 (unreleased)
+
+### RVM API tracking updates
+
+* Drop rake 0.9.2 from default global gems to match upstream default. ([@fnichol][])
+
+### Bug fixes
+
+* Pull request [#64](https://github.com/fnichol/chef-rvm/pull/64): Fix check for rvm in user install. ([@dokipen][])
+* Issue [#61](https://github.com/fnichol/chef-rvm/issues/61): Include Chef::RVM::StringHelpers to provide select_ruby function. ([@jheth][])
+
+### New features
+
+* Update default Ruby to ruby-1.9.3-p0 (it's time). ([@fnichol][])
+
+### Improvements
+
+* Now rvm\_global\_gem respects version attr in global.gems file. ([@fnichol][])
+
+
+## 0.8.6 (November 28, 2011)
+
+### RVM API tracking updates
+
+* Issue [#56](https://github.com/fnichol/chef-rvm/issues/56): Ensure that RVM version strings can be converted to RubyGems format. ([@fnichol][])
+* Issue [#53](https://github.com/fnichol/chef-rvm/issues/53): Update rvm/installer\_url default to latest URL. ([@fnichol][])
+
+### Bug fixes
+
+* Issue [#54](https://github.com/fnichol/chef-rvm/issues/54), Pull request [#55](https://github.com/fnichol/chef-rvm/pull/55): Fix if statement typo in `RVM::RubyGems::Package`. ([@bradphelan][])
+* Pull request [#57](https://github.com/fnichol/chef-rvm/pull/57): Fix typo in `RVM::RubyGems::Package`. ([@bradphelan][])
+
+### Improvements
+
+* Add note to README warning that chef 0.8.x will not work. ([@fnichol][])
+* Issue [#48](https://github.com/fnichol/chef-rvm/issues/48): Add example of local gem source installation in README. ([@fnichol][])
+
+
+## 0.8.4 (October 16, 2011)
+
+### RVM API tracking updates
+
+* Issue [#43](https://github.com/fnichol/chef-rvm/issues/43), Pull request [#46](https://github.com/fnichol/chef-rvm/pull/46): Make explicit use of `exec` for RVM versions older than 1.8.6 and `do` for newer versions. ([@ryansch][], [@fnichol][])
+
+### Bug fixes
+
+* Pull request [#39](https://github.com/fnichol/chef-rvm/pull/39): Fix rvm_ruby provider on Ubuntu/Debian when installing JRuby. ([@exempla][])
+* Issues [#38](https://github.com/fnichol/chef-rvm/issues/38), [#42](https://github.com/fnichol/chef-rvm/issues/42): Update user_installs attribute to be an array of hashes in README. ([@fnichol][])
+
+### New features
+
+* Pull request [#47](https://github.com/fnichol/chef-rvm/pull/47): Handle installing a gem from a local file. ([@ryansch][])
+
+### Improvements
+
+* Pull request [#44](https://github.com/fnichol/chef-rvm/pull/44): Add Amazon's Linux AMI support. ([@adrianpike][])
 
 
 ## 0.8.2 (August 24, 2011)
@@ -8,7 +63,7 @@
 * Ensure Ruby/gemset is installed in rvm_shell provider. ([@fnichol][])
 * Issue [#35](https://github.com/fnichol/chef-rvm/issues/35): Detect if user has RVM installed in rvm_shell provider. ([@fnichol][])
 
-### Improvments
+### Improvements
 
 * Array-ize node['rvm']['user_installs']. ([@fnichol][])
 
@@ -34,7 +89,7 @@
 * Pull request [#26](https://github.com/fnichol/chef-rvm/pull/26): Add new attribute `group_id`. ([@temujin9][])
 * General refactoring and re-modularizing. ([@fnichol][])
 
-### Improvments
+### Improvements
 
 * Pull request [#26](https://github.com/fnichol/chef-rvm/pull/26): RVM unix group is created in compilation phase if GID is provided. ([@temujin9][])
 * Revamp CHANGELOG in the style of [guard](https://github.com/guard/guard). ([@fnichol][])
@@ -58,7 +113,7 @@
 
 * Add Rakefile for opscode platform deploy builds. ([@fnichol][])
 
-### Improvments
+### Improvements
 
 * Update metadata.rb properties. ([@fnichol][])
 
@@ -78,7 +133,7 @@
 * New experimental recipe gem_package which patches gem_package resource. ([@fnichol][])
 * Add rvm_global_gem resource. ([@fnichol][])
 
-### Improvments
+### Improvements
 
 * Issue [#3](https://github.com/fnichol/chef-rvm/issues/3): Revamp and update README.md. ([@fnichol][])
 * Issue [#3](https://github.com/fnichol/chef-rvm/issues/5): Add CHANGELOG.md. ([@fnichol][])
@@ -92,8 +147,14 @@
 The changelog began with version 0.6.0 so any changes prior to that can be
 seen by checking the tagged releases and reading git commit messages.
 
+[@adrianpike]: https://github.com/adrianpike
+[@bradphelan]: https://github.com/bradphelan
+[@dokipen]: https://github.com/dokipen
+[@exempla]: https://github.com/exempla
 [@fnichol]: https://github.com/fnichol
+[@jheth]: https://github.com/jheth
 [@juzzin]: https://github.com/juzzin
 [@phlipper]: https://github.com/phlipper
 [@relistan]: https://github.com/relistan
+[@ryansch]: https://github.com/ryansch
 [@temujin9]: https://github.com/temujin9

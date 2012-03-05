@@ -1,102 +1,19 @@
-# Description
+# <a name="title"></a> chef-rvm
+
+## <a name="description"></a> Description
 
 Manages system-wide and per-user [RVM][rvm]s and manages installed Rubies.
 Several lightweight resources and providers ([LWRP][lwrp]) are also defined.
 
-# Requirements
+## <a name="usage"></a> Usage
 
-## Chef
-
-Tested on 0.10.2 and 0.10.4 but newer and older version should work just
-fine. File an [issue][issues] if this isn't the case.
-
-## Platform
-
-The following platforms have been tested with this cookbook, meaning that
-the recipes and LWRPs run on these platforms without error:
-
-* ubuntu (10.04/10.10/11.04)
-* debian (6.0)
-* mac_os_x (10.6/10.7)
-* suse (openSUSE, SLES)
-* centos
-* redhat
-* fedora
-
-Please [report][issues] any additional platforms so they can be added.
-
-## Cookbooks
-
-There are **no** external cookbook dependencies. However, if you are
-installing [JRuby][jruby] then a Java runtime will need to be installed.
-The Opscode [java cookbook][java_cb] can be used on supported platforms.
-
-# Installation
-
-Depending on the situation and use case there are several ways to install
-this cookbook. All the methods listed below assume a tagged version release
-is the target, but omit the tags to get the head of development. A valid
-Chef repository structure like the [Opscode repo][chef_repo] is also assumed.
-
-## Using Librarian
-
-The [Librarian][librarian] gem aims to be Bundler for your Chef cookbooks.
-Include a reference to the cookbook in a **Cheffile** and run
-`librarian-chef install`. To install with Librarian:
-
-    gem install librarian
-    cd chef-repo
-    librarian-chef init
-    cat >> Cheffile <<END_OF_CHEFFILE
-    cookbook 'rvm',
-      :git => 'git://github.com/fnichol/chef-rvm.git', :ref => 'v0.8.2'
-    END_OF_CHEFFILE
-    librarian-chef install
-
-## Using knife-github-cookbooks
-
-The [knife-github-cookbooks][kgc] gem is a plugin for *knife* that supports
-installing cookbooks directly from a GitHub repository. To install with the
-plugin:
-
-    gem install knife-github-cookbooks
-    cd chef-repo
-    knife cookbook github install fnichol/chef-rvm/v0.8.2
-
-## As a Git Submodule
-
-A common practice (which is getting dated) is to add cookbooks as Git
-submodules. This is accomplishes like so:
-
-    cd chef-repo
-    git submodule add git://github.com/fnichol/chef-rvm.git cookbooks/rvm
-    git submodule init && git submodule update
-
-**Note:** the head of development will be linked here, not a tagged release.
-
-## As a Tarball
-
-If the cookbook needs to downloaded temporarily just to be uploaded to a Chef
-Server or Opscode Hosted Chef, then a tarball installation might fit the bill:
-
-    cd chef-repo/cookbooks
-    curl -Ls https://github.com/fnichol/chef-rvm/tarball/v0.8.2 | tar xfz - && \
-      mv fnichol-chef-rvm-* rvm
-
-## From the Opscode Community Platform
-
-This cookbook is not currently available on the site due to the flat
-namespace for cookbooks. There is some community work to be done here.
-
-# Usage
-
-## RVM Installed System-Wide with Rubies
+### <a name="usage-system-rubies"></a> RVM Installed System-Wide with Rubies
 
 Most likely, this is the typical case. Include `recipe[rvm::system]` in your
 run_list and override the defaults you want changed. See below for more
 details.
 
-## RVM Installed For A Specific User with Rubies
+### <a name="usage-user-rubies"></a> RVM Installed For A Specific User with Rubies
 
 If you want a per-user install (like on a Mac/Linux workstation for
 development), include `recipe[rvm::user]` in your run_list and add a user
@@ -111,14 +28,14 @@ hash to the `user_installs` attribute list. For example:
 
 See below for more details.
 
-## RVM Installed System-Wide and LWRPs Defined
+### <a name="usage-system"></a> RVM Installed System-Wide and LWRPs Defined
 
 If you want to manage your own RVM environment with the provided [LWRP][lwrp]s,
 then include `recipe[rvm::system_install]` in your run_list to prevent
 a default RVM Ruby being installed. See the **Resources and Providers**
 section for more details.
 
-## RVM Installed For A Specific User and LWRPs Defined
+### <a name="usage-user"></a> RVM Installed For A Specific User and LWRPs Defined
 
 If you want to manage your own RVM environment for users with the provided
 LWRPs, then include `recipe[rvm::user_install]` in your run_list and add a
@@ -130,13 +47,13 @@ user hash to the `user_installs` attribute list. For example:
 
 See the **Resources and Providers** section for more details.
 
-## Ultra-Minimal Access To LWRPs
+### <a name="usage-minimal"></a> Ultra-Minimal Access To LWRPs
 
 Simply include `recipe[rvm]` in your run_list and the LWRPs will be available
 to use in other cookbooks. See the **Resources and Providers** section for
 more details.
 
-## Other Use Cases
+### <a name="usage-other"></a> Other Use Cases
 
 * If node is running in a Vagrant VM, then including `recipe[rvm::vagrant]`
 in your run_list can help with resolving the *chef-solo* binary on subsequent
@@ -145,16 +62,105 @@ provision executions.
 you can try including `recipe[rvm::gem_package]` in your run_list. Please
 read the recipe details before attempting.
 
-# Recipes
+## <a name="requirements"></a> Requirements
 
-## default
+### <a name="requirements-chef"></a> Chef
+
+Tested on 0.10.2/0.10.4 and 0.9.16 but newer and older versions (of 0.9.x)
+should work just fine. Due to the `rvm_gem` implementation, versions 0.8.x
+of Chef currently will **not** work (see [GH-50][gh50]).
+
+File an [issue][issues] if this isn't the case.
+
+### <a name="requirements-platform"></a> Platform
+
+The following platforms have been tested with this cookbook, meaning that
+the recipes and LWRPs run on these platforms without error:
+
+* ubuntu (10.04/10.10/11.04)
+* debian (6.0)
+* mac_os_x (10.6/10.7)
+* suse (openSUSE, SLES)
+* centos
+* amazon (2011.09)
+* redhat
+* fedora
+
+Please [report][issues] any additional platforms so they can be added.
+
+### <a name="requirements-cookbooks"></a> Cookbooks
+
+There are **no** external cookbook dependencies. However, if you are
+installing [JRuby][jruby] then a Java runtime will need to be installed.
+The Opscode [java cookbook][java_cb] can be used on supported platforms.
+
+## <a name="installation"></a> Installation
+
+Depending on the situation and use case there are several ways to install
+this cookbook. All the methods listed below assume a tagged version release
+is the target, but omit the tags to get the head of development. A valid
+Chef repository structure like the [Opscode repo][chef_repo] is also assumed.
+
+### <a name="installation-librarian"></a> Using Librarian
+
+The [Librarian][librarian] gem aims to be Bundler for your Chef cookbooks.
+Include a reference to the cookbook in a **Cheffile** and run
+`librarian-chef install`. To install with Librarian:
+
+    gem install librarian
+    cd chef-repo
+    librarian-chef init
+    cat >> Cheffile <<END_OF_CHEFFILE
+    cookbook 'rvm',
+      :git => 'git://github.com/fnichol/chef-rvm.git', :ref => 'v0.8.6'
+    END_OF_CHEFFILE
+    librarian-chef install
+
+### <a name="installation-kgc"></a> Using knife-github-cookbooks
+
+The [knife-github-cookbooks][kgc] gem is a plugin for *knife* that supports
+installing cookbooks directly from a GitHub repository. To install with the
+plugin:
+
+    gem install knife-github-cookbooks
+    cd chef-repo
+    knife cookbook github install fnichol/chef-rvm/v0.8.6
+
+### <a name="installation-gitsubmodule"></a> As a Git Submodule
+
+A common practice (which is getting dated) is to add cookbooks as Git
+submodules. This is accomplishes like so:
+
+    cd chef-repo
+    git submodule add git://github.com/fnichol/chef-rvm.git cookbooks/rvm
+    git submodule init && git submodule update
+
+**Note:** the head of development will be linked here, not a tagged release.
+
+### <a name="installation-tarball"></a> As a Tarball
+
+If the cookbook needs to downloaded temporarily just to be uploaded to a Chef
+Server or Opscode Hosted Chef, then a tarball installation might fit the bill:
+
+    cd chef-repo/cookbooks
+    curl -Ls https://github.com/fnichol/chef-rvm/tarball/v0.8.6 | tar xfz - && \
+      mv fnichol-chef-rvm-* rvm
+
+### <a name="installation-platform"></a> From the Opscode Community Platform
+
+This cookbook is not currently available on the site due to the flat
+namespace for cookbooks. There is some community work to be done here.
+
+## <a name="recipes"></a> Recipes
+
+### <a name="recipes-default"></a> default
 
 Installs the RVM gem and initializes Chef to use the Lightweight Resources
 and Providers ([LWRPs][lwrp]).
 
 Use this recipe explicitly if you only want access to the LWRPs provided.
 
-## system_install
+### <a name="recipes-system-install"></a> system_install
 
 Installs the RVM codebase system-wide (that is, into `/usr/local/rvm`). This
 recipe includes *default*.
@@ -162,7 +168,7 @@ recipe includes *default*.
 Use this recipe by itself if you want RVM installed system-wide but want
 to handle installing Rubies, invoking LWRPs, etc..
 
-## system
+### <a name="recipes-system"></a> system
 
 Installs the RVM codebase system-wide (that is, into `/usr/local/rvm`) and
 installs Rubies, global gems, and specific gems driven off attribute metadata.
@@ -171,7 +177,7 @@ This recipe includes *default* and *system_install*.
 Use this recipe by itself if you want RVM system-wide with Rubies installed,
 etc.
 
-## user_install
+### <a name="recipes-user-install"></a> user_install
 
 Installs the RVM codebase for a list of users (selected from the
 `node['rvm']['user_installs']` hash). This recipe includes *default*.
@@ -179,7 +185,7 @@ Installs the RVM codebase for a list of users (selected from the
 Use this recipe by itself if you want RVM installed for specific users in
 isolation but want each user to handle installing Rubies, invoking LWRPs, etc.
 
-## user
+### <a name="recipes-user"></a> user
 
 Installs the RVM codebase for a list of users (selected from the
 `node['rvm']['user_installs']` hash) and installs Rubies, global gems, and
@@ -189,14 +195,14 @@ and *user_install*.
 Use this recipe by itself if you want RVM installed for specific users in
 isolation with Rubies installed, etc.
 
-## vagrant
+### <a name="recipes-vagrant"></a> vagrant
 
 An optional recipe if Chef is installed in a non-RVM Ruby in a
 [Vagrant][vagrant] virtual machine. This recipe adds the default *vagrant*
 user to the RVM unix group and installs a `chef-solo` wrapper script so Chef
 doesn't need to be re-installed in the default RVM Ruby.
 
-## gem_package
+### <a name="recipes-gem-package"></a> gem_package
 
 An experimental recipe that patches the [gem_package resource][gem_package]
 to use the `Chef::Provider::Package::RVMRubygems` provider. An attribute
@@ -212,27 +218,27 @@ other cookbooks during the compilation phase.
 **Warning:** [Here be dragons][dragons]! This is either brilliant or the
 dumbest idea ever, so feedback is appreciated.
 
-# Attributes
+## <a name="attributes"></a> Attributes
 
-## default_ruby
+### <a name="attributes-default-ruby"></a> default_ruby
 
 The default Ruby for RVM installed system-wide. If the RVM Ruby is not
 installed, it will be built as a pre-requisite. The value can also contain a
 gemset in the form of `"ruby-1.8.7-p352@awesome"`.
 
-The default is `"ruby-1.9.2-p290"`. To disable a default Ruby from being
+The default is `"ruby-1.9.3-p125"`. To disable a default Ruby from being
 set, use an empty string (`""`) or a value of `"system"`.
 
-## user_default_ruby
+### <a name="attributes-user-default-ruby"></a> user_default_ruby
 
 The default Ruby for RVMs installed per-user when not explicitly set for that
 user. If the RVM Ruby is not installed, it will be built as a pre-requisite.
 The value can also contain a gemset in the form of `"ruby-1.8.7-p352@awesome"`.
 
-The default is `"ruby-1.9.2-p290"`. To disable a default Ruby from being
+The default is `"ruby-1.9.3-p125"`. To disable a default Ruby from being
 set, use an empty string (`""`) or a value of `"system"`.
 
-## rubies
+### <a name="attributes-rubies"></a> rubies
 
 A list of additional RVM system-wide Rubies to be built and installed. This
 list does not need to necessarily contain your default Ruby as the
@@ -242,7 +248,7 @@ list does not need to necessarily contain your default Ruby as the
 
 The default is an empty array: `[]`.
 
-## user_rubies
+### <a name="attributes-user-rubies"></a> user_rubies
 
 A list of additional RVM Rubies to be built and installed per-user when not
 explicitly set. This list does not need to necessarily contain your default
@@ -253,7 +259,7 @@ For example:
 
 The default is an empty array: `[]`.
 
-## global_gems
+### <a name="attributes-global-gems"></a> global_gems
 
 A list of gem hashes to be installed into the *global* gemset in each
 installed RVM Ruby sytem-wide. The **global.gems** files will be added to and
@@ -270,7 +276,7 @@ The default puts bundler and rake in each Ruby:
       }
     ]
 
-## user_global_gems
+### <a name="attributes-user-global-gems"></a> user_global_gems
 
 A list of gem hashes to be installed into the *global* gemset in each
 installed RVM Ruby for each user when not explicitly set. The
@@ -287,7 +293,7 @@ The default puts bundler and rake in each Ruby:
       }
     ]
 
-## gems
+### <a name="attributes-gems"></a> gems
 
 A list of gem hashes to be installed into arbitrary RVM Rubies and gemsets
 system-wide. See the `rvm_gem` resource for more details about the options for
@@ -311,7 +317,7 @@ each gem hash and target Ruby environment. For example:
 
 The default is an empty hash: `{}`.
 
-## user_gems
+### <a name="attributes-user-gems"></a> user_gems
 
 A list of gem hashes to be installed into arbitrary RVM Rubies and gemsets
 for each user when not explicitly set. See the `rvm_gem` resource for more
@@ -320,7 +326,7 @@ the `gems` attribute for an example.
 
 The default is an empty hash: `{}`.
 
-## rvmrc
+### <a name="attributes-rvmrc"></a> rvmrc
 
 A hash of system-wide `rvmrc` options. The key is the RVM setting name
 (in String or Symbol form) and the value is the desired setting value.
@@ -334,7 +340,7 @@ An example used on a build box might be:
 
 The default is an empty hash: `{}`.
 
-## user_installs
+### <a name="attributes-user-installs"></a> user_installs
 
 A list of user specific RVM installation hashes. The `user_install` and
 `user` recipes use this attribute to determine per-user installation settings.
@@ -374,13 +380,13 @@ The hash keys correspond to the default/system equivalents. For example:
 
 The default is an empty list: `[]`.
 
-## installer_url
+### <a name="attributes-installer-url"></a> installer_url
 
 The URL that provides the RVM installer.
 
-The default is `"https://rvm.beginrescueend.com/install/rvm"`.
+The default is `"https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer"`.
 
-## branch
+### <a name="attributes-branch"></a> branch
 
 A specific git branch to use when installing system-wide. For example:
 
@@ -388,7 +394,7 @@ A specific git branch to use when installing system-wide. For example:
 
 The default is `nil` which corresponds to the master branch.
 
-## version
+### <a name="attributes-version"></a> version
 
 A specific tagged version to use when installing system-wide. This value is
 passed directly to the `rvm-installer` script and current valid values are:
@@ -401,7 +407,7 @@ one day to the next (RVM head moves pretty darn quickly):
 
 The default is `nil`, which corresponds to RVM `"head"`.
 
-## upgrade
+### <a name="attributes-upgrade"></a> upgrade
 
 Determines how to handle installing updates to the RVM framework system-wide.
 There are currently 3 valid values:
@@ -416,13 +422,13 @@ There are currently 3 valid values:
 
 The default is `"none"`.
 
-## root_path
+### <a name="attributes-root-path"></a> root_path
 
 The path prefix to RVM in a system-wide installation.
 
 The default is `"/usr/local/rvm"`.
 
-## group_id
+### <a name="attributes-group-id"></a> group_id
 
 The Unix *GID* to be used for the `rvm` group. If this attribute is set,
 the group will be created in the compilation phase to avoid any collisions
@@ -431,14 +437,14 @@ the RVM installer will create this group as normal.
 
 The default is `default`.
 
-## group_users
+### <a name="attributes-group-users"></a> group_users
 
 A list of users that will be added to the `rvm` group. These users
 will then be able to manage RVM in a system-wide installation.
 
 The default is an empty list: `[]`.
 
-## rvm_gem_options
+### <a name="attributes-rvm-gem-options"></a> rvm_gem_options
 
 These options are passed to the *gem* command in an RVM environment.
 In the interest of speed, rdoc and ri docs will not be generated by default.
@@ -448,7 +454,7 @@ To re-enable the documentation generation set:
 
 The default is `"--no-rdoc --no-ri"`.
 
-## install_rubies (Future Deprecation)
+### <a name="attributes-install-rubies"></a> install_rubies (Future Deprecation)
 
 Can enable or disable installation of a default Ruby and additional Rubies
 system-wide. For example:
@@ -460,7 +466,7 @@ The default is `"true"`.
 **Note:** This remains a legacy setting and will be deprecated in
 the next minor version release.
 
-## user_install_rubies (Future Deprecation)
+### <a name="attributes-user-install-rubies"></a> iuser_install_rubies (Future Deprecation)
 
 Can enable or disable installation of a default Ruby and additional Rubies
 per user. For example:
@@ -472,7 +478,7 @@ The default is `"true"`.
 **Note:** This remains a legacy setting and will be deprecated in
 the next minor version release.
 
-## gem_package/rvm_string
+### <a name="attributes-gem-package-rvm-string"></a> gem_package/rvm_string
 
 If using the `gem_package` recipe, this determines which Ruby or Rubies will
 be used by the `gem_package` resource in other cookbooks. The value can be
@@ -482,35 +488,94 @@ unmanaged system Ruby you can use `system`.
 
 The default is the value of the `default_ruby` attribute.
 
-## vagrant/system_chef_solo
+### <a name="attributes-vagrant-system-chef-solo"></a> vagrant/system_chef_solo
 
 If using the `vagrant` recipe, this sets the path to the package-installed
 *chef-solo* binary.
 
 The default is `"/opt/ruby/bin/chef-solo"`.
 
-# Resources and Providers
+## <a name="lwrps"></a> Resources and Providers
 
-## rvm_ruby
+### <a name="lwrps-rvmruby"></a> rvm_ruby
 
-### Actions
+#### <a name="lwrps-rvmruby-actions"></a> Actions
 
-Action    |Description                   |Default
-----------|------------------------------|-------
-install   |Build and install an RVM Ruby. See [RVM rubies/installing][rvm_install] for more details. |Yes
-remove    |Remove the Ruby, source files and optional gemsets/archives. See [RVM rubies/removing][rvm_remove] for more details. |
-uninstall |Just remove the Ruby and leave everything else. See [RVM rubies/removing][rvm_remove] for more details. |
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>install</td>
+      <td>
+        Build and install an RVM Ruby. See RVM rubies/installing<sup>(1)</sup>
+        for more details.
+      </td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>remove</td>
+      <td>
+        Remove the Ruby, source files and optional gemsets/archives. See RVM
+        rubies/removing<sup>(2)</sup> for more details.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>uninstall</td>
+      <td>
+        Just remove the Ruby and leave everything else. See RVM rubies/removing<sup>(3)</sup> for more details.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
 
-### Attributes
+1. [RVM rubies/installing][rvm_install]
+2. [RVM rubies/removing][rvm_remove]
+3. [RVM rubies/removing][rvm_remove]
 
-Attribute   |Description |Default value
-------------|------------|-------------
-ruby_string |**Name attribute:** an RVM Ruby string that could contain a gemset. If a gemset is given (for example, `"ruby-1.8.7-p330@awesome"`), then it will be stripped. |`nil`
-user        |A users's isolated RVM installation on which to apply an action. The default value of `nil` denotes a system-wide RVM installation is being targeted. **Note:** if specified, the user must already exist. |`nil`
+#### <a name="lwrps-rvmruby-actions"></a> Attributes
 
-### Examples
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ruby_string</td>
+      <td>
+        <b>Name attribute:</b> an RVM Ruby string that could contain a gemset.
+        If a gemset is given (for example,
+        <code>"ruby-1.8.7-p330@awesome"</code>), then it will be stripped.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+        A users's isolated RVM installation on which to apply an action. The
+        default value of <code>nil</code> denotes a system-wide RVM
+        installation is being targeted. <b>Note:</b> if specified, the user
+        must already exist.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+  </tbody>
+</table>
 
-#### Install Ruby
+#### <a name="lwrps-rvmruby-examples"></a> Examples
+
+##### Install Ruby
 
     rvm_ruby "ree" do
       action :install
@@ -521,7 +586,7 @@ user        |A users's isolated RVM installation on which to apply an action. Th
 **Note:** the install action is default, so the second example is a more common
 usage.
 
-#### Remove Ruby
+##### Remove Ruby
 
     rvm_ruby "ree-1.8.7-2011.01" do
       action :remove
@@ -530,7 +595,7 @@ usage.
 **Note:** the RVM documentation mentions that this method is far preferred to
 using uninstall since it purges almost everything.
 
-#### Uninstall Ruby
+##### Uninstall Ruby
 
     rvm_ruby "ree-1.8.7-2011.01" do
       action  :uninstall
@@ -539,29 +604,73 @@ using uninstall since it purges almost everything.
 
 **Note:** The RVM installation for the *jenkins* user will be acted upon.
 
-## rvm_default_ruby
+### <a name="lwrps-rvmdefaultruby"></a> rvm_default_ruby
 
 This resource sets the default RVM Ruby, optionally with gemset. The given
 Ruby will be installed if it isn't already and a gemset will be created in
 none currently exist. If multiple declarations are used then the last executed
 one "wins".
 
-### Actions
+#### <a name="lwrps-rvmdefaultruby-actions"></a> Actions
 
-Action    |Description                   |Default
-----------|------------------------------|-------
-create    |Set the default RVM Ruby. See [RVM rubies/default][rvm_default] for more details. |Yes
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>create</td>
+      <td>
+        Set the default RVM Ruby. See RVM rubies/default<sup>(1)</sup> for
+        more details.
+      </td>
+      <td>Yes</td>
+    </tr>
+  </tbody>
+</table>
 
-### Attributes
+1. [RVM rubies/default][rvm_default]
 
-Attribute   |Description |Default value
-------------|------------|-------------
-ruby_string |**Name attribute:** an RVM Ruby string that could contain a gemset. If a gemset is given (for example, `"ruby-1.8.7-p330@awesome"`), then it will be included. |`nil`
-user        |A users's isolated RVM installation on which to apply an action. The default value of `nil` denotes a system-wide RVM installation is being targeted. **Note:** if specified, the user must already exist. |`nil`
+#### <a name="lwrps-rvmdefaultruby-attributes"></a> Attributes
 
-### Examples
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ruby_string</td>
+      <td>
+        <b>Name attribute:</b> an RVM Ruby string that could contain a gemset.
+        If a gemset is given (for example,
+        <code>"ruby-1.8.7-p330@awesome"</code>), then it will be included.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+        A users's isolated RVM installation on which to apply an action. The
+        default value of <code>nil</code> denotes a system-wide RVM
+        installation is being targeted. <b>Note:</b> if specified, the
+        user must already exist.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+  </tbody>
+</table>
 
-#### Setting The Default Ruby
+#### <a name="lwrps-rvmdefaultruby-examples"></a> Examples
+
+##### Setting The Default Ruby
 
     rvm_default_ruby "ree" do
       action :create
@@ -572,55 +681,168 @@ user        |A users's isolated RVM installation on which to apply an action. Th
 **Note:** the create action is default, so the second example is a more common
 usage.
 
-## rvm_environment
+### <a name="lwrps-rvmenvironment"></a> rvm_environment
 
 This resource ensures that the specified RVM Ruby is installed and the optional
 gemset is created. It is a convenience resource which wraps `rvm_ruby` and
 `rvm_gemset` so it can be used as a sort of *über Ruby* resource which
 parallels the `rvm_default_ruby` resource.
 
-### Actions
+#### <a name="lwrps-rvmenvironment-actions"></a> Actions
 
-Action    |Description                   |Default
--------|------------------------------|-------
-create |Installs the specified RVM Ruby and gemset. |Yes
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>create</td>
+      <td>Installs the specified RVM Ruby and gemset.</td>
+      <td>Yes</td>
+    </tr>
+  </tbody>
+</table>
 
-### Attributes
+#### <a name="lwrps-rvmenvironment-attributes"></a> Attributes
 
-Attribute   |Description |Default value
-------------|------------|-------------
-ruby_string |**Name attribute:** an RVM Ruby string that could contain a gemset. If a gemset is given (for example, `"ruby-1.8.7-p330@awesome"`), then it will be used. |`nil`
-user        |A users's isolated RVM installation on which to apply an action. The default value of `nil` denotes a system-wide RVM installation is being targeted. **Note:** if specified, the user must already exist. |`nil`
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ruby_string</td>
+      <td>
+        <b>Name attribute:</b> an RVM Ruby string that could contain a gemset.
+        If a gemset is given (for example,
+        <code>"ruby-1.8.7-p330@awesome"</code>), then it will be used.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+        A users's isolated RVM installation on which to apply an action. The
+        default value of <code>nil</code> denotes a system-wide RVM
+        installation is being targeted. <b>Note:</b> if specified, the
+        user must already exist.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+  </tbody>
+</table>
 
-### Examples
+#### <a name="lwrps-rvmenvironment-examples"></a> Examples
 
-#### Creating A Passenger Environment In Production
+##### Creating A Passenger Environment In Production
 
     rvm_environment "ree-1.8.7-2011.01@passenger"
 
-## rvm_gemset
+### <a name="lwrps-rvmgemset"></a> rvm_gemset
+
 See [RVM gemsets][rvm_gemsets] for more background concerning gemsets.
 
-### Actions
+#### <a name="lwrps-rvmgemset-actions"></a> Actions
 
-Action    |Description                   |Default
-----------|------------------------------|-------
-create    |Creates a new gemset in a given RVM Ruby. See [RVM gemsets/creating][rvm_create_gemset] for more details. |Yes
-update    |Update all gems installed to the gemset in a given RVM Ruby. |
-empty     |Remove all gems installed to the gemset in a given RVM Ruby. See [RVM gemsets/emptying][rvm_empty_gemset] for more details. |
-delete    |Delete gemset from the given RVM Ruby. See [RVM gemsets/deleting][rvm_delete_gemset] for more details. |
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>create</td>
+      <td>
+        Creates a new gemset in a given RVM Ruby. See RVM
+        gemsets/creating<sup>(1)</sup> for more details.
+      </td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>update</td>
+      <td>
+        Update all gems installed to the gemset in a given RVM Ruby.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>empty</td>
+      <td>
+        Remove all gems installed to the gemset in a given RVM Ruby. See RVM
+        gemsets/emptying<sup>(2)</sup> for more details.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>delete</td>
+      <td>
+        Delete gemset from the given RVM Ruby. See RVM
+        gemsets/deleting<sup>(3)</sup> for more details.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
 
-### Attributes
+1. [RVM gemsets/creating][rvm_create_gemset]
+2. [RVM gemsets/emptying][rvm_empty_gemset]
+3. [RVM gemsets/deleting][rvm_delete_gemset]
 
-Attribute   |Description |Default value
-------------|------------|-------------
-gemset      |**Name attribute:**  Either an RVM Ruby string containing a gemset or a bare gemset name. If only the gemset name is given, then the `ruby_string` attribute must be used to indicate which RVM Ruby to target. |`nil`
-ruby_string |An RVM Ruby string that should not contain a gemset. |`nil`
-user        |A users's isolated RVM installation on which to apply an action. The default value of `nil` denotes a system-wide RVM installation is being targeted. **Note:** if specified, the user must already exist. |`nil`
+#### <a name="lwrps-rvmgemset-attributes"></a> Attributes
 
-### Examples
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>gemset</td>
+      <td>
+        <b>Name attribute:</b> Either an RVM Ruby string containing a gemset
+        or a bare gemset name. If only the gemset name is given, then the
+        <code>ruby_string</code> attribute must be used to indicate which
+        RVM Ruby to target.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>ruby_string</td>
+      <td>
+        An RVM Ruby string that should not contain a gemset.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+        A users's isolated RVM installation on which to apply an action. The
+        default value of <code>nil</code> denotes a system-wide RVM
+        installation is being targeted. <b>Note:</b> if specified, the
+        user must already exist.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+  </tbody>
+</table>
 
-#### Creating A Gemset
+#### <a name="lwrps-rvmgemset-examples"></a> Examples
+
+##### Creating A Gemset
 
     rvm_gemset "rails" do
       ruby_string "ruby-1.9.2-p136"
@@ -632,54 +854,136 @@ user        |A users's isolated RVM installation on which to apply an action. Th
 **Note:** the create action is default, so the second example is a more common
 usage.
 
-#### Updating A Gemset
+##### Updating A Gemset
 
     rvm_gemset "jruby-1.6.0.RC2@development" do
       action :update
     end
 
-#### Emptying A Gemset
+##### Emptying A Gemset
 
     rvm_gemset "development" do
       ruby_string "jruby-1.6.3"
       action      :empty
     end
 
-#### Deleting A Gemset
+##### Deleting A Gemset
 
     rvm_gemset "ruby-1.9.2-p136@rails" do
       action :delete
     end
 
-## rvm_gem
+### <a name="lwrps-rvmgem"></a> rvm_gem
 
 This resource is a close analog to the `gem_package` provider/resource which
 is RVM-aware. See the Opscode [package resource][package_resource] and
 [gem package options][gem_package_options] pages for more details.
 
-### Actions
+#### <a name="lwrps-rvmgem-actions"></a> Actions
 
-Action    |Description                   |Default
-----------|------------------------------|-------
-install   |Install a gem - if version is provided, install that specific version. |Yes
-upgrade   |Upgrade a gem - if version is provided, upgrade to that specific version.|
-remove    |Remove a gem.|
-purge     |Purge a gem.|
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>install</td>
+      <td>
+        Install a gem - if version is provided, install that specific version.
+      </td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>upgrade</td>
+      <td>
+        Upgrade a gem - if version is provided, upgrade to that specific
+        version
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>remove</td>
+      <td>
+        Remove a gem.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>purge</td>
+      <td>
+        Purge a gem.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
 
-### Attributes
+#### <a name="lwrps-rvmgem-attributes"></a> Attributes
 
-Attribute   |Description |Default value
-------------|------------|-------------
-package_name |**Name Attribute:** the name of the gem to install.|`nil`
-ruby_string |An RVM Ruby string that could contain a gemset. If a gemset is given (for example, `"ruby-1.8.7-p330@awesome"`), then it will be used. |`"default"`
-version     |The specific version of the gem to install/upgrade. |`nil`
-options     |Add additional options to the underlying gem command. |`nil`
-source      |Provide an additional source for gem providers (such as RubyGems). |`nil`
-user        |A users's isolated RVM installation on which to apply an action. The default value of `nil` denotes a system-wide RVM installation is being targeted. **Note:** if specified, the user must already exist. |`nil`
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>package_name</td>
+      <td>
+        <b>Name attribute:</b> the name of the gem to install.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>version</td>
+      <td>
+        The specific version of the gem to install/upgrade.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>options</td>
+      <td>
+        Add additional options to the underlying gem command.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>source</td>
+      <td>
+        Provide an additional source for gem providers (such as RubyGems).
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>gem_binary</td>
+      <td>
+        A gem_package attribute to specify a gem binary.
+      </td>
+      <td><code>"gem"</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+        A users's isolated RVM installation on which to apply an action. The
+        default value of <code>nil</code> denotes a system-wide RVM
+        installation is being targeted. <b>Note:</b> if specified, the
+        user must already exist.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+  </tbody>
+</table>
 
-### Examples
+#### <a name="lwrps-rvmgem-examples"></a> Examples
 
-#### Install A Gem
+##### Install A Gem
 
     rvm_gem "thor" do
       ruby_string "ruby-1.8.7-p352"
@@ -699,7 +1003,15 @@ user        |A users's isolated RVM installation on which to apply an action. Th
 **Note:** the install action is default, so the second example is a more common
 usage. Gemsets can also be specified.
 
-#### Keep A Gem Up To Date
+##### Install A Gem From A Local File
+
+    rvm_gem "json" do
+      ruby_string "ree@project"
+      source      "/tmp/json-1.5.1.gem"
+      version     "1.5.1"
+    end
+
+##### Keep A Gem Up To Date
 
     rvm_gem "homesick" do
       action :upgrade
@@ -708,7 +1020,7 @@ usage. Gemsets can also be specified.
 **Note:** the default RVM Ruby will be targeted if no `ruby_string` attribute
 is given.
 
-#### Remove A Gem
+##### Remove A Gem
 
     rvm_gem "nokogiri" do
       ruby_string "jruby-1.5.6"
@@ -716,70 +1028,268 @@ is given.
       action      :remove
     end
 
-## rvm_global_gem
+### <a name="lwrps-rvmglobalgem"></a> rvm_global_gem
 
 This resource will use the `rvm_gem` resource to manage a gem in the *global*
 gemset accross all RVM Rubies. An entry will also be made/removed in RVM's
 *global.gems* file. See the Opscode [package resource][package_resource] and
 [gem package options][gem_package_options] pages for more details.
 
-### Actions
+#### <a name="lwrps-rvmglobalgem-actions"></a> Actions
 
-Action    |Description                   |Default
-----------|------------------------------|-------
-install   |Install a gem across all Rubies - if version is provided, install that specific version. |Yes
-upgrade   |Upgrade a gem across all Rubies - if version is provided, upgrade to that specific version.|
-remove    |Remove a gem across all Rubies.|
-purge     |Purge a gem across all Rubies.|
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>install</td>
+      <td>
+        Install a gem across all Rubies - if version is provided, install that
+        specific version.
+      </td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>upgrade</td>
+      <td>
+        Upgrade a gem across all Rubies - if version is provided, upgrade to
+        that specific version.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>remove</td>
+      <td>
+        Remove a gem across all Rubies.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>purge</td>
+      <td>
+        Purge a gem across all Rubies.
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
 
-### Attributes
+#### <a name="lwrps-rvmglobalgem-attributes"></a> Attributes
 
-Attribute   |Description |Default value
-------------|------------|-------------
-package_name |**Name Attribute:** the name of the gem to install.|`nil`
-version     |The specific version of the gem to install/upgrade. |`nil`
-options     |Add additional options to the underlying gem command. |`nil`
-source      |Provide an additional source for gem providers (such as RubyGems). |`nil`
-gem_binary  |A gem_package attribute to specify a gem binary. |`gem`
-user        |A users's isolated RVM installation on which to apply an action. The default value of `nil` denotes a system-wide RVM installation is being targeted. **Note:** if specified, the user must already exist. |`nil`
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>package_name</td>
+      <td>
+        <b>Name attribute:</b> the name of the gem to install.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>ruby_string</td>
+      <td>
+        An RVM Ruby string that could contain a gemset. If a gemset is given
+        (for example, <code>"ruby-1.8.7-p330@awesome"</code>), then it will
+        be used.
+      </td>
+      <td><code>"default"</code></td>
+    </tr>
+    <tr>
+      <td>version</td>
+      <td>
+        The specific version of the gem to install/upgrade.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>options</td>
+      <td>
+        Add additional options to the underlying gem command.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>source</td>
+      <td>
+        Provide an additional source for gem providers (such as RubyGems).
+        This can also include a file system path to a <code>.gem</code> file
+        such as <code>/tmp/json-1.5.1.gem</code>.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+        A users's isolated RVM installation on which to apply an action. The
+        default value of <code>nil</code> denotes a system-wide RVM
+        installation is being targeted. <b>Note:</b> if specified, the
+        user must already exist.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+  </tbody>
+</table>
 
-## rvm_shell
+### <a name="lwrps-rvmshell"></a> rvm_shell
 
 This resource is a wrapper for the `script` resource which wraps the code block
 in an RVM-aware environment.. See the Opscode
 [script resource][script_resource] page for more details.
 
-### Actions
+#### <a name="lwrps-rvmshell-actions"></a> Actions
 
-Action    |Description                   |Default
-----------|------------------------------|-------
-run       |Run the script                |Yes
-nothing   |Do not run this command       |
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>run</td>
+      <td>Run the script</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>nothing</td>
+      <td>Do not run this command</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
 
 Use `action :nothing` to set a command to only run if another resource
 notifies it.
 
-### Attributes
+#### <a name="lwrps-rvmshell-attributes"></a> Attributes
 
-Attribute   |Description |Default value
-------------|------------|-------------
-name        |**Name Attribute:** Name of the command to execute. |name
-ruby_string |An RVM Ruby string that could contain a gemset. If a gemset is given (for example, `"ruby-1.8.7-p330@awesome"`), then it will be used. |`"default"`
-code        |Quoted script of code to execute. |`nil`
-creates     |A file this command creates - if the file exists, the command will not be run. |`nil`
-cwd         |Current working director to run the command from. |`nil`
-environment |A has of environment variables to set before running this command. |`nil`
-group       |A group or group ID that we should change to before running this command. |`nil`
-path        |An array of paths to use when searching for the command. |`nil`, uses system path
-returns     |The return value of the command (may be an array of accepted values) - this resource raises an exception if the return value(s) do not match. |`0`
-timeout     |How many seconds to let the command run before timing out. |`nil`
-user        |A user name or user ID that we should change to before running this command. |`nil`
-user        |A users's isolated RVM installation on which to apply an action. The default value of `nil` denotes a system-wide RVM installation is being targeted. **Note:** if specified, the user must already exist. |`nil`
-umask       |Umask for files created by the command. |`nil`
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>name</td>
+      <td>
+        <b>Name attribute:</b> Name of the command to execute.
+      </td>
+      <td><code>name</code></td>
+    </tr>
+    <tr>
+      <td>ruby_string</td>
+      <td>
+        An RVM Ruby string that could contain a gemset. If a gemset is given
+        (for example, <code>"ruby-1.8.7-p330@awesome"</code>), then it will
+        be used.
+      </td>
+      <td><code>"default"</code></td>
+    </tr>
+    <tr>
+      <td>code</td>
+      <td>
+        Quoted script of code to execute.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>creates</td>
+      <td>
+        A file this command creates - if the file exists, the command will not
+        be run.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>cwd</td>
+      <td>
+        Current working director to run the command from.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>environment</td>
+      <td>
+        A hash of environment variables to set before running this command.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>group</td>
+      <td>
+        A group or group ID that we should change to before running this command.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>path</td>
+      <td>
+        An array of paths to use when searching for the command.
+      </td>
+      <td><code>nil</code>, uses system path</td>
+    </tr>
+    <tr>
+      <td>returns</td>
+      <td>
+        The return value of the command (may be an array of accepted values) -
+        this resource raises an exception if the return value(s) do not match.
+      </td>
+      <td><code>0</code></td>
+    </tr>
+    <tr>
+      <td>timeout</td>
+      <td>
+        How many seconds to let the command run before timing out.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+       A user name or user ID that we should change to before running this command.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+        A users's isolated RVM installation on which to apply an action. The
+        default value of <code>nil</code> denotes a system-wide RVM
+        installation is being targeted. <b>Note:</b> if specified, the
+        user must already exist.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>umask</td>
+      <td>
+        Umask for files created by the command.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+  </tbody>
+</table>
 
-### Examples
+#### <a name="lwrps-rvmshell-examples"></a> Examples
 
-#### Run A Rake Task
+##### Run A Rake Task
 
     rvm_shell "migrate_rails_database" do
       ruby_string "1.8.7-p352@webapp"
@@ -789,34 +1299,93 @@ umask       |Umask for files created by the command. |`nil`
       code        %{rake RAILS_ENV=production db:migrate}
     end
 
-## rvm_wrapper
+### <a name="lwrps-rvmwrapper"></a> rvm_wrapper
 
 This resource creates a wrapper script for a binary or list of binaries in
 a given RVM Ruby (and optional gemset). The given Ruby will be installed if
 it isn't already and a gemset will be created in none currently exist.
 
-### Actions
+#### <a name="lwrps-rvmwrapper-actions"></a> Actions
 
-Action    |Description                   |Default
--------|------------------------------|-------
-create |Creates one or more wrapper scripts. |Yes
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>create</td>
+      <td>Creates on or more wrapper scripts.</td>
+      <td>Yes</td>
+    </tr>
+  </tbody>
+</table>
 
-### Attributes
+#### <a name="lwrps-rvmwrapper-attributes"></a> Attributes
 
-Attribute   |Description |Default value
-------------|------------|-------------
-prefix      |**Name attribute:** a prefix string for the wrapper script name. |`nil`
-ruby_string |An RVM Ruby string that could contain a gemset. If a gemset is given (for example, `"ruby-1.8.7-p330@awesome"`), then it will be used. |`nil`
-binary      |A single binary to be wrapped. If this attribute is used do not set values for the `binaries` attribute. |`nil`
-binaries    |A list of binaries to be wrapped. If this attribute is used do not set a value for the `binary` attribute. |`nil`
-user        |A users's isolated RVM installation on which to apply an action. The default value of `nil` denotes a system-wide RVM installation is being targeted. **Note:** if specified, the user must already exist. |`nil`
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>prefix</td>
+      <td>
+        <b>Name attribute:</b> a prefix string for the wrapper script name.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>ruby_string</td>
+      <td>
+        An RVM Ruby string that could contain a gemset. If a gemset is given
+        (for example, <code>"ruby-1.8.7-p330@awesome"</code>), then it will
+        be used.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>binary</td>
+      <td>
+        A single binary to be wrapped. If this attribute is used do not set
+        values for the <code>binaries</code> attribute.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>binaries</td>
+      <td>
+        A list of binaries to be wrapped. If this attribute is used do not set
+        a value for the <code>binary</code> attribute.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>
+        A users's isolated RVM installation on which to apply an action. The
+        default value of <code>nil</code> denotes a system-wide RVM
+        installation is being targeted. <b>Note:</b> if specified, the user
+        must already exist.
+      </td>
+      <td><code>nil</code></td>
+    </tr>
+  </tbody>
+</table>
 
 **Note:** only `binary` or `binaries` should be used by themselves (never at
 the same time).
 
-### Examples
+#### <a name="lwrps-rvmwrapper-examples"></a> Examples
 
-#### Wrapping A Ruby CLI
+##### Wrapping A Ruby CLI
 
     rvm_wrapper "sys" do
       ruby_string   "jruby@utils"
@@ -826,7 +1395,7 @@ the same time).
 This will create a wrapper script called `sys_thor` in the `bin` directory
 under `node['rvm']['root_path']`.
 
-#### Wrapping A List Of Binaries
+##### Wrapping A List Of Binaries
 
     rvm_wrapper "test" do
       ruby_string   "default@testing"
@@ -834,7 +1403,7 @@ under `node['rvm']['root_path']`.
       action        :create
     end
 
-# Development
+## <a name="development"></a> Development
 
 * Source hosted at [GitHub][repo]
 * Report issues/Questions/Feature requests on [GitHub Issues][issues]
@@ -842,9 +1411,10 @@ under `node['rvm']['root_path']`.
 Pull requests are very welcome! Make sure your patches are well tested.
 Ideally create a topic branch for every seperate change you make.
 
-# License and Author
+## <a name="license"></a> License and Author
 
-Author:: [Fletcher Nichol][fnichol] (<fnichol@nichol.ca>)
+Author:: [Fletcher Nichol][fnichol] (<fnichol@nichol.ca>) [![endorse](http://api.coderwall.com/fnichol/endorsecount.png)](http://coderwall.com/fnichol)
+
 
 Contributors:: https://github.com/fnichol/chef-rvm/contributors
 
@@ -867,6 +1437,7 @@ limitations under the License.
 [dragons]:              http://en.wikipedia.org/wiki/Here_be_dragons
 [gem_package]:          http://wiki.opscode.com/display/chef/Resources#Resources-Package
 [gem_package_options]:  http://wiki.opscode.com/display/chef/Resources#Resources-GemPackageOptions
+[gh50]:                 https://github.com/fnichol/chef-rvm/issues/50
 [fnichol]:              https://github.com/fnichol
 [java_cb]:              http://community.opscode.com/cookbooks/java
 [jruby]:                http://jruby.org/

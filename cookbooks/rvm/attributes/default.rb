@@ -20,8 +20,8 @@
 #
 
 # ruby that will get installed and set to `rvm use default`.
-default['rvm']['default_ruby']      = "ruby-1.9.2-p290"
-default['rvm']['user_default_ruby'] = "ruby-1.9.2-p290"
+default['rvm']['default_ruby']      = "ruby-1.9.3-p125"
+default['rvm']['user_default_ruby'] = "ruby-1.9.3-p125"
 
 # list of additional rubies that will be installed
 default['rvm']['rubies']      = []
@@ -29,10 +29,7 @@ default['rvm']['user_rubies'] = []
 
 # list of gems to be installed in global gemset of all rubies
 _global_gems_ = [
-  { 'name'    => 'bundler' },
-  { 'name'    => 'rake',
-    'version' => '0.9.2'
-  }
+  { 'name'    => 'bundler' }
 ]
 default['rvm']['global_gems']       = _global_gems_.dup
 default['rvm']['user_global_gems']  = _global_gems_.dup
@@ -48,9 +45,9 @@ default['rvm']['rvmrc']         = Hash.new
 default['rvm']['user_installs'] = []
 
 # system-wide installer options
-default['rvm']['installer_url'] = "https://rvm.beginrescueend.com/install/rvm"
-default['rvm']['branch']  = nil
-default['rvm']['version'] = nil
+default['rvm']['installer_url'] = "https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer"
+default['rvm']['branch']  = "stable"
+default['rvm']['version'] = "head"
 default['rvm']['upgrade'] = "none"
 
 # extra system-wide tunables
@@ -66,7 +63,7 @@ default['rvm']['install_rubies']      = "true"
 default['rvm']['user_install_rubies'] = "true"
 
 case platform
-when "redhat","centos","fedora"
+when "redhat","centos","fedora", "amazon"
   node.set['rvm']['install_pkgs']   = %w{sed grep tar gzip bzip2 bash curl git}
   default['rvm']['user_home_root']  = '/home'
 when "debian","ubuntu","suse"
