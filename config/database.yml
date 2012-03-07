@@ -29,7 +29,7 @@ test:
   pool: 5
   username: root
   password:
-  host: 127.0.0.1
+  host: localhost
 
 production:
   adapter: mysql2
