@@ -11,7 +11,7 @@ gem 'jquery-rails'
 gem 'git'
 gem 'resque'
 gem 'state_machine'
-gem 'vagrant', '0.8.10'
+gem 'vagrant', '~> 1.0'
 
 gem 'foreman'
 gem 'unicorn'
